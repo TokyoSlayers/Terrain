@@ -1,0 +1,47 @@
+// Information for all projects
+
+// The default tasks for all projects
+defaultTasks 'removeOldReleases', 'build', 'createReleaseJar', 'install'
+
+allprojects
+{
+    version = "2.7.2"
+    group = "com.khorn.terraincontrol"
+
+    // Version of the shadow plugin
+    ext.shadowVersion = '1.2.1'
+}
+
+// Information for all subprojects
+// (common, forge and bukkit, but not this file)
+subprojects
+{   task ->
+
+    task.plugins.withType(org.gradle.api.plugins.JavaBasePlugin)
+    {
+        // We're still on Java 6
+        sourceCompatibility = '1.6'
+
+        // Generate Eclipse config files when using "gradle eclipse"
+        task.apply plugin: 'eclipse'
+
+        // Generate IntelliJ IDEA config files
+        task.apply plugin: 'idea'
+
+    }
+
+    // Generate a pom.xml, upload to local Maven repository
+    apply plugin: 'maven'
+}
+
+task removeOldReleases <<
+{
+    allprojects
+    {
+        File distributionsFolder = new File(project.buildDir, "distributions")
+        if (distributionsFolder.exists())
+        {
+            distributionsFolder.deleteDir()
+        }
+    }
+}
